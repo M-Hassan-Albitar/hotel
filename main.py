@@ -7,6 +7,7 @@ BG = "#070A52"
 BTN = "#D21312"
 UPDATE = "#F15A59"
 T = "white"
+CLEAR = "green"
 
 
 # ====================================== LOGIC ======================================================== #
@@ -56,27 +57,31 @@ def save():
 def search_data():
     s_num = search.get()
     if len(s_num) > 0:
-        with open(file="data.json", mode="r") as data_file:
-            data = json.load(data_file)
-        if s_num in data:
-            name.insert(0, data[s_num]["name"])
-            phone.insert(0, data[s_num]["phone"])
-            cash.insert(0, data[s_num]["cash"])
-            exd.insert(0, data[s_num]["exd"])
-            # print(data[s_num])
-            with open(file="report.txt", mode="w") as report_file:
-                d_num = s_num
-                d_name = data[s_num]["name"]
-                d_phone = data[s_num]["phone"]
-                d_cash = data[s_num]["cash"]
-                d_std = data[s_num]["std"]
-                d_exd = data[s_num]["exd"]
-                report_file.write(
-                    f"===================\nNumber: {d_num}\n===================\nName: {d_name}\n===================\nPhone: {d_phone}\n===================\nCash: {d_cash}\n===================\nStart: {d_std}\n===================\nEnd: {d_exd}\n===================\n")
-            webbrowser.open("report.txt")
+        try:
+            with open(file="data.json", mode="r") as data_file:
+                data = json.load(data_file)
+        except FileNotFoundError:
+            messagebox.showinfo("Error", "No Data File.")
         else:
-            messagebox.showinfo("No Data", "No Data.")
-            # std.insert(END, data[s_num]["std"])
+            if s_num in data:
+                name.insert(0, data[s_num]["name"])
+                phone.insert(0, data[s_num]["phone"])
+                cash.insert(0, data[s_num]["cash"])
+                exd.insert(0, data[s_num]["exd"])
+                # print(data[s_num])
+                with open(file="report.txt", mode="w") as report_file:
+                    d_num = s_num
+                    d_name = data[s_num]["name"]
+                    d_phone = data[s_num]["phone"]
+                    d_cash = data[s_num]["cash"]
+                    d_std = data[s_num]["std"]
+                    d_exd = data[s_num]["exd"]
+                    report_file.write(
+                        f"===================\nNumber: {d_num}\n===================\nName: {d_name}\n===================\nPhone: {d_phone}\n===================\nCash: {d_cash}\n===================\nStart: {d_std}\n===================\nEnd: {d_exd}\n===================\n")
+                webbrowser.open("report.txt")
+            else:
+                messagebox.showinfo("No Data", "No Data.")
+                # std.insert(END, data[s_num]["std"])
     else:
         messagebox.showinfo("Error", "Search field can not be empty.")
 
@@ -105,6 +110,16 @@ def update():
         exd.delete(0, END)
     else:
         messagebox.showinfo("Error", "Search field can not be empty.")
+
+
+def clear_all():
+    flat.delete(0, END)
+    name.delete(0, END)
+    phone.delete(0, END)
+    cash.delete(0, END)
+    std.delete(0, END)
+    exd.delete(0, END)
+    search.delete(0, END)
 
 
 # ====================================== MAIN UI ====================================================== #
@@ -157,5 +172,8 @@ new_search.grid(row=3, column=3, columnspan=2)
 new_update = Button(text="Update", width=23, background=UPDATE, highlightthickness=0, foreground=T, pady=7,
                     command=update)
 new_update.grid(row=4, column=3, columnspan=2)
+new_update = Button(text="Clear", width=23, background=CLEAR, highlightthickness=0, foreground=T, pady=7,
+                    command=clear_all)
+new_update.grid(row=8, column=3, columnspan=2)
 
 window.mainloop()
